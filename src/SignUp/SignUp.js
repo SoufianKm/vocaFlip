@@ -1,12 +1,14 @@
 import React, { Component } from "react";
 import { auth } from "../firebase/firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
+import { AppContext } from "../App/AppContext"; // Import the AppContext
 
 class SignUpForm extends Component {
+  static contextType = AppContext; // Set context
+
   constructor(props) {
     super(props);
     this.state = {
-      name: "",
       email: "",
       password: "",
     };
@@ -21,20 +23,20 @@ class SignUpForm extends Component {
 
   handleOnSubmit = async (evt) => {
     evt.preventDefault();
-    const { name, email, password } = this.state;
+    const { email, password } = this.state;
+    const { logIn } = this.context; // Get the logIn function from context
 
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
-      alert(
-        `You are signed up with name: ${name}, email: ${email}, and password: ${password}`
-      );
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const { user } = userCredential;
+      logIn({ email: user.email }); // Log in and store user in session
+      alert(`You have signed up with email: ${email}`);
     } catch (err) {
       console.log(err);
     }
 
     // Reset the form fields
     this.setState({
-      name: "",
       email: "",
       password: "",
     });
@@ -57,13 +59,6 @@ class SignUpForm extends Component {
             </a>
           </div>
           <span>or use your email for registration</span>
-          {/* <input
-            type="text"
-            name="name"
-            value={this.state.name}
-            onChange={this.handleChange}
-            placeholder="Name"
-          /> */}
           <input
             type="email"
             name="email"

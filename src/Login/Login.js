@@ -1,8 +1,11 @@
-import React, { Component } from "react";
+import React, { useContext, Component } from "react";
 import { auth } from "../firebase/firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
+import { AppContext } from "../App/AppContext"; // Import the AppContext
 
 class SignInForm extends Component {
+  static contextType = AppContext;
+
   constructor(props) {
     super(props);
     this.state = {
@@ -22,9 +25,13 @@ class SignInForm extends Component {
     evt.preventDefault();
 
     const { email, password } = this.state;
+    const { logIn } = this.context; // Get the logIn function from context
+
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      alert(`You are logged in with email: ${email} and password: ${password}`);
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const { user } = userCredential;
+      logIn({ email: user.email }); // Log in and store user in session
+      alert(`You are logged in with email: ${email}`);
     } catch (err) {
       console.log(err);
     }
@@ -41,18 +48,6 @@ class SignInForm extends Component {
       <div className="form-container sign-in-container">
         <form onSubmit={this.handleOnSubmit}>
           <h1>Sign in</h1>
-          <div className="social-container">
-            <a href="#" className="social">
-              <i className="fab fa-facebook-f" />
-            </a>
-            <a href="#" className="social">
-              <i className="fab fa-github" />
-            </a>
-            <a href="#" className="social">
-              <i className="fab fa-linkedin-in" />
-            </a>
-          </div>
-          <span>or use your account</span>
           <input
             type="email"
             placeholder="Email"
@@ -67,7 +62,6 @@ class SignInForm extends Component {
             value={this.state.password}
             onChange={this.handleChange}
           />
-          <a href="#">Forgot your password?</a>
           <button type="submit">Sign In</button>
         </form>
       </div>
