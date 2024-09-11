@@ -26,7 +26,6 @@ function Header() {
             className={css(styles.logoutButton)}
             onClick={() => {
               logOut(); // Call logOut function from context
-              alert("You have successfully logged out."); // Notify user
             }}
           >
             Log Out

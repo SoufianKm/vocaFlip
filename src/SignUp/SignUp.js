@@ -30,7 +30,6 @@ class SignUpForm extends Component {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const { user } = userCredential;
       logIn({ email: user.email }); // Log in and store user in session
-      alert(`You have signed up with email: ${email}`);
     } catch (err) {
       console.log(err);
     }
