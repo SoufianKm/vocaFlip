@@ -4,8 +4,7 @@
 }
 
 @import url("https://fonts.googleapis.com/css?family=Montserrat:400,800");
-@import url('@fortawesome/fontawesome-free/css/all.min.css');
-
+@import url("@fortawesome/fontawesome-free/css/all.min.css");
 
 * {
   box-sizing: border-box;
@@ -71,6 +70,10 @@ button:active {
 
 button:focus {
   outline: none;
+}
+
+button:hover {
+  background-color: #fb8500;
 }
 
 button.ghost {
@@ -167,7 +170,7 @@ input {
 }
 
 .overlay {
-  background: #0F68A9;
+  background: #0f68a9;
   background: -webkit-linear-gradient(to right, #219ebc, #023047);
   background: linear-gradient(to right, #219ebc, #023047);
   background-repeat: no-repeat;

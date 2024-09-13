@@ -6,6 +6,7 @@ import SignInForm from "../Login/Login";
 import SignUpForm from "../SignUp/SignUp";
 import { StyleSheet, css } from "aphrodite";
 import { AppProvider, AppContext } from "./AppContext"; // Import AppContext
+import BodySection from "../BodySection/BodySection"; // Import the Decks component
 
 // MainContainer component to handle the conditional rendering
 function MainContainer({ type, handleOnClick }) {
@@ -53,15 +54,7 @@ function MainContainer({ type, handleOnClick }) {
   }
 
   // If the user is logged in, display the flashcards section
-  return (
-    <div className={css(styles.flashcardsSection)}>
-      <h1>Welcome to the Flashcards Section!</h1>
-      <p>
-        Here you can create and manage your flashcards for effective learning.
-      </p>
-      {/* Additional flashcard-related content can be added here */}
-    </div>
-  );
+  return <BodySection />;
 }
 
 // Main App component
@@ -117,16 +110,6 @@ const styles = StyleSheet.create({
     borderBottom: "5px solid",
     borderImage: "linear-gradient(to right, #219ebc, #023047) 0 0 1 0",
     padding: "20px",
-  },
-  flashcardsSection: {
-    padding: "20px",
-    textAlign: "center",
-    color: "#023047",
-    minHeight: "100vh",
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
   },
 });
 
