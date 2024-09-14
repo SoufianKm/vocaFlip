@@ -3,8 +3,15 @@ import { StyleSheet, css } from "aphrodite";
 import DeckCreator from "../Decks/DeckCreator";
 import BodyLearning from "../BodyLearning/BodyLearning";
 import { PiCardsThreeFill } from "react-icons/pi";
-import { TbCardsFilled } from "react-icons/tb";
+import { TbCardsFilled, TbEdit, TbTrash } from "react-icons/tb"; // Import edit and delete icons
 import { GiCardRandom } from "react-icons/gi";
+import {
+  initializeCarouselState,
+  handleMouseDown,
+  handleMouseMove,
+  handleMouseUp,
+  handleMouseLeave,
+} from "../utils/utils"; // Adjust the import path as necessary
 
 // Modal component for displaying content
 const Modal = ({ children, onClose }) => {
@@ -24,94 +31,51 @@ const Modal = ({ children, onClose }) => {
 const BodySection = () => {
   const [activeSection, setActiveSection] = useState("startLearning");
   const [decks, setDecks] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedDeck, setSelectedDeck] = useState(null);
   const [creatingDeck, setCreatingDeck] = useState(false);
 
   const handleCreateDeck = (newDeck) => {
     // Check if the deck already exists
-  const deckExists = decks.some(
-    (deck) =>
-      deck.title === newDeck.title &&
-      deck.firstLanguage === newDeck.firstLanguage &&
-      deck.secondLanguage === newDeck.secondLanguage
-  );
+    const deckExists = decks.some(
+      (deck) =>
+        deck.title === newDeck.title &&
+        deck.firstLanguage === newDeck.firstLanguage &&
+        deck.secondLanguage === newDeck.secondLanguage
+    );
 
-  if (deckExists) {
-    alert("A similar deck already exists!");
-    return; // Prevent deck creation
-  }
+    if (deckExists) {
+      alert("A similar deck already exists!");
+      return; // Prevent deck creation
+    }
 
-  // If no duplicate, add the new deck
-    setDecks([...decks, newDeck]);
-    setCreatingDeck(false);
+    // If no duplicate, add the new deck with a unique ID
+    const deckWithId = { ...newDeck, id: Date.now() }; // Assign a unique ID
+
+    setDecks([...decks, deckWithId]); // Add new deck to state
+    setCreatingDeck(false); // Close the modal or creation form
+  };
+
+  const handleDelete = (deckId) => {
+    setDecks(decks.filter((deck) => deck.id !== deckId)); // Remove the deck by id
+  };
+
+  const handleEdit = (deck) => {
+    setSelectedDeck(deck);
+    setIsModalOpen(true); // Open the edit modal
+  };
+
+  const handleUpdateDeck = (updatedDeck) => {
+    setDecks(
+      decks.map((deck) => (deck.id === updatedDeck.id ? updatedDeck : deck))
+    );
+    setIsModalOpen(false); // Close the modal after updating
   };
 
   const carouselRefs = useRef([]);
   const [isDragging, setIsDragging] = useState([]);
   const [startX, setStartX] = useState([]);
   const [scrollLeft, setScrollLeft] = useState([]);
-
-  // Initialize state for each carousel
-  const initializeCarouselState = (index) => {
-    setIsDragging((prev) => {
-      const newArr = [...prev];
-      newArr[index] = false;
-      return newArr;
-    });
-    setStartX((prev) => {
-      const newArr = [...prev];
-      newArr[index] = 0;
-      return newArr;
-    });
-    setScrollLeft((prev) => {
-      const newArr = [...prev];
-      newArr[index] = 0;
-      return newArr;
-    });
-  };
-
-  // Handle mouse down event for each carousel
-  const handleMouseDown = (e, index) => {
-    initializeCarouselState(index); // Initialize state if it's not set
-    setIsDragging((prev) => {
-      const newArr = [...prev];
-      newArr[index] = true;
-      return newArr;
-    });
-    setStartX((prev) => {
-      const newArr = [...prev];
-      newArr[index] = e.pageX - carouselRefs.current[index].offsetLeft;
-      return newArr;
-    });
-    setScrollLeft((prev) => {
-      const newArr = [...prev];
-      newArr[index] = carouselRefs.current[index].scrollLeft;
-      return newArr;
-    });
-  };
-
-  // Handle mouse move event for each carousel
-  const handleMouseMove = (e, index) => {
-    if (!isDragging[index]) return; // Only move when dragging is active for the specific carousel
-    const x = e.pageX - carouselRefs.current[index].offsetLeft;
-    const walk = (x - startX[index]) * 2; // Adjust scroll speed
-    carouselRefs.current[index].scrollLeft = scrollLeft[index] - walk;
-  };
-
-  const handleMouseUp = (index) => {
-    setIsDragging((prev) => {
-      const newArr = [...prev];
-      newArr[index] = false;
-      return newArr;
-    });
-  };
-
-  const handleMouseLeave = (index) => {
-    setIsDragging((prev) => {
-      const newArr = [...prev];
-      newArr[index] = false;
-      return newArr;
-    });
-  };
 
   return (
     <div className={css(styles.container)}>
@@ -178,10 +142,33 @@ const BodySection = () => {
                           isDragging[carouselIndex] ? css(styles.grabbing) : ""
                         }`} // Add grabbing style conditionally
                         ref={(el) => (carouselRefs.current[carouselIndex] = el)}
-                        onMouseDown={(e) => handleMouseDown(e, carouselIndex)}
-                        onMouseMove={(e) => handleMouseMove(e, carouselIndex)}
-                        onMouseUp={() => handleMouseUp(carouselIndex)}
-                        onMouseLeave={() => handleMouseLeave(carouselIndex)}
+                        onMouseDown={(e) =>
+                          handleMouseDown(
+                            e,
+                            carouselIndex,
+                            carouselRefs,
+                            setIsDragging,
+                            setStartX,
+                            setScrollLeft,
+                            initializeCarouselState
+                          )
+                        }
+                        onMouseMove={(e) =>
+                          handleMouseMove(
+                            e,
+                            carouselIndex,
+                            isDragging,
+                            startX,
+                            carouselRefs,
+                            scrollLeft
+                          )
+                        }
+                        onMouseUp={() =>
+                          handleMouseUp(setIsDragging, carouselIndex)
+                        }
+                        onMouseLeave={() =>
+                          handleMouseLeave(setIsDragging, carouselIndex)
+                        }
                       >
                         {groupedDecks.map((deck, index) => (
                           <div key={index} className={css(styles.carouselItem)}>
@@ -189,6 +176,16 @@ const BodySection = () => {
                             <p className={css(styles.deckTitle)}>
                               {deck.title}
                             </p>
+                            <div className={css(styles.iconContainer)}>
+                              <TbEdit
+                                className={css(styles.iconAction)}
+                                onClick={() => handleEdit(deck)}
+                              />
+                              <TbTrash
+                                className={css(styles.iconAction)}
+                                onClick={() => handleDelete(deck.id)}
+                              />
+                            </div>
                           </div>
                         ))}
                       </div>
@@ -211,6 +208,27 @@ const BodySection = () => {
                   onCancel={() => setCreatingDeck(false)}
                   onSubmit={handleCreateDeck}
                 />
+              </Modal>
+            )}
+            {isModalOpen && (
+              <Modal onClose={() => setIsModalOpen(false)}>
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    handleUpdateDeck({
+                      ...selectedDeck,
+                      title: e.target.deckName.value,
+                    });
+                  }}
+                >
+                  <label>Edit Deck Name:</label>
+                  <input
+                    type="text"
+                    name="deckName"
+                    defaultValue={selectedDeck?.title}
+                  />
+                  <button type="submit">Save</button>
+                </form>
               </Modal>
             )}
           </div>
@@ -369,6 +387,18 @@ const styles = StyleSheet.create({
   },
   grabbing: {
     cursor: "grabbing",
+  },
+  iconContainer: {
+    display: "flex",
+    justifyContent: "space-between",
+    width: "60px",
+  },
+  iconAction: {
+    cursor: "pointer",
+    color: "white",
+    ":hover": {
+      color: "yellow",
+    },
   },
 });
 
