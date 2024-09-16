@@ -6,9 +6,14 @@ describe("DeckCreator Component", () => {
   let wrapper;
   const onCancelMock = jest.fn();
   const onSubmitMock = jest.fn();
+  const alertMock = jest.spyOn(window, 'alert').mockImplementation(() => {});
 
   beforeEach(() => {
     wrapper = shallow(<DeckCreator onCancel={onCancelMock} onSubmit={onSubmitMock} />);
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   it("renders without crashing", () => {
@@ -42,6 +47,9 @@ describe("DeckCreator Component", () => {
     wrapper.find('select').at(1).simulate("change", { target: { value: "English" } });
 
     wrapper.find("form").simulate("submit", { preventDefault: jest.fn() });
+    expect(alertMock).toHaveBeenCalledWith(
+      "The language you would like to learn should be different from the language you already know."
+    );
     expect(onSubmitMock).not.toHaveBeenCalled();
   });
 
@@ -61,5 +69,21 @@ describe("DeckCreator Component", () => {
   it("calls onCancel when cancel button is clicked", () => {
     wrapper.find('button[type="button"]').simulate("click");
     expect(onCancelMock).toHaveBeenCalled();
+  });
+
+  it("prevents submission if required fields are missing", () => {
+    // Empty title
+    wrapper.find('select').at(0).simulate("change", { target: { value: "English" } });
+    wrapper.find('select').at(1).simulate("change", { target: { value: "Spanish" } });
+
+    wrapper.find("form").simulate("submit", { preventDefault: jest.fn() });
+    expect(onSubmitMock).not.toHaveBeenCalled();
+
+    // Empty languages
+    wrapper.find('input[type="text"]').simulate("change", { target: { value: "My Deck" } });
+    wrapper.find('select').at(0).simulate("change", { target: { value: "" } });
+
+    wrapper.find("form").simulate("submit", { preventDefault: jest.fn() });
+    expect(onSubmitMock).not.toHaveBeenCalled();
   });
 });
