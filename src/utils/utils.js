@@ -1,3 +1,6 @@
+import React from "react";
+import { StyleSheet, css } from "aphrodite";
+
 export function getFullYear() {
   return new Date().getFullYear();
 }
@@ -90,3 +93,41 @@ export const handleMouseLeave = (setIsDragging, index) => {
     return newArr;
   });
 };
+
+// Modal component for displaying content
+export const Modal = ({ children, onClose }) => {
+  return (
+    <div className={css(styles.modalBackdrop)} onClick={onClose}>
+      <div
+        className={css(styles.modalContent)}
+        onClick={(e) => e.stopPropagation()}
+      >
+        {children}
+      </div>
+    </div>
+  );
+};
+
+// Styles
+const styles = StyleSheet.create({
+  modalBackdrop: {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 1000,
+  },
+  modalContent: {
+    backgroundColor: "#fff",
+    padding: "20px",
+    borderRadius: "8px",
+    maxWidth: "500px",
+    width: "100%",
+    boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
+  },
+});
