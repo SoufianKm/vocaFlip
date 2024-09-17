@@ -1,31 +1,32 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import { css, StyleSheet } from "aphrodite";
-import { HiArrowLeft } from "react-icons/hi"; // Import the left arrow icon
-import {
-  initializeCarouselState,
-  handleMouseDown,
-  handleMouseMove,
-  handleMouseUp,
-  handleMouseLeave,
-} from "../utils/utils"; // Adjust the import path as necessary
+import { HiArrowLeft } from "react-icons/hi";
+import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/css"; // Import Swiper styles
+import "swiper/css/effect-coverflow";
+import "swiper/css/pagination";
+import "swiper/css/navigation";
 
-function DeckSelectorAndFlashcards({ deck, flashcards, setActiveDeckForFlashcards }) {
-  const [flippedCards, setFlippedCards] = useState({}); // State to track which cards are flipped
-  const carouselRefs = useRef([]);
-  const [isDragging, setIsDragging] = useState([]);
-  const [startX, setStartX] = useState([]);
-  const [scrollLeft, setScrollLeft] = useState([]);
+import { EffectCoverflow, Pagination, Navigation } from "swiper/modules"; // Correct import for modules
+
+function DeckSelectorAndFlashcards({
+  deck,
+  flashcards,
+  setActiveDeckForFlashcards,
+}) {
+  const [flippedCards, setFlippedCards] = useState({});
 
   const handleBackToSection = () => {
-    setActiveDeckForFlashcards(null); // Reset selected deck to go back to the BodySection
+    setActiveDeckForFlashcards(null);
   };
 
   const handleCardClick = (index) => {
     setFlippedCards((prev) => ({
       ...prev,
-      [index]: !prev[index], // Toggle flip state for the clicked card
+      [index]: !prev[index],
     }));
   };
+
   return (
     <div className={css(styles.flashcardSection)}>
       <div className={css(styles.backButton)} onClick={handleBackToSection}>
@@ -37,37 +38,34 @@ function DeckSelectorAndFlashcards({ deck, flashcards, setActiveDeckForFlashcard
         <p>No flashcards exist for this deck.</p>
       ) : (
         <div className={css(styles.flashcardsContainer)}>
-          <ul
-            className={css(styles.carouselFlashcards)} // Add grabbing style conditionally
-            ref={(el) => (carouselRefs.current[0] = el)}
-            onMouseDown={(e) =>
-              handleMouseDown(
-                e,
-                0,
-                carouselRefs,
-                setIsDragging,
-                setStartX,
-                setScrollLeft,
-                initializeCarouselState
-              )
-            }
-            onMouseMove={(e) =>
-              handleMouseMove(
-                e,
-                0,
-                isDragging,
-                startX,
-                carouselRefs,
-                scrollLeft
-              )
-            }
-            onMouseUp={() => handleMouseUp(setIsDragging, 0)}
-            onMouseLeave={() => handleMouseLeave(setIsDragging, 0)}
+          <Swiper
+            effect={"coverflow"}
+            grabCursor={true}
+            centeredSlides={true}
+            loop={false}
+            slidesPerView={"auto"}
+            coverflowEffect={{
+              rotate: 0,
+              stretch: 0,
+              depth: 100,
+              modifier: 2.5,
+            }}
+            pagination={{
+              clickable: true,
+              type: 'progressbar',
+            }}
+            navigation={{
+              clickable: true,
+            }}
+            modules={[EffectCoverflow, Pagination, Navigation]} // Ensure correct module usage
+            className={`${css(
+              styles.swiperContainer
+            )} "swiper_container swiperButtonPrev swiperButtonNex"`}
           >
             {flashcards
               .filter((card) => card.deckId === deck.id)
               .map((card, index) => (
-                <li
+                <SwiperSlide
                   key={index}
                   className={css(styles.carouselFlashcardsItem)}
                   onClick={() => handleCardClick(index)}
@@ -88,9 +86,9 @@ function DeckSelectorAndFlashcards({ deck, flashcards, setActiveDeckForFlashcard
                       </strong>
                     </div>
                   </div>
-                </li>
+                </SwiperSlide>
               ))}
-          </ul>
+          </Swiper>
         </div>
       )}
     </div>
@@ -99,9 +97,6 @@ function DeckSelectorAndFlashcards({ deck, flashcards, setActiveDeckForFlashcard
 
 // Styles
 const styles = StyleSheet.create({
-  grabbing: {
-    cursor: "grabbing",
-  },
   backButton: {
     display: "flex",
     alignItems: "center",
@@ -126,30 +121,22 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: "1rem",
   },
-  carouselFlashcards: {
-    listStyleType: "none",
-    display: "flex",
-    overflow: "hidden",
-    cursor: "grab",
-    userSelect: "none",
-  },
   carouselFlashcardsItem: {
     minWidth: "200px",
     height: "300px",
-    marginRight: "20px",
-    perspective: "1000px", // Enables 3D flip effect
+    perspective: "1000px",
     cursor: "pointer",
-    padding: "20px 0px",
+    width: "auto",
   },
   cardInner: {
     position: "relative",
     width: "100%",
     height: "100%",
-    transformStyle: "preserve-3d", // Enable 3D space
-    transition: "transform 0.6s", // Smooth transition for flipping
+    transformStyle: "preserve-3d",
+    transition: "transform 0.6s",
   },
   flipped: {
-    transform: "rotateY(180deg)", // Flip the card when this class is added
+    transform: "rotateY(180deg)",
   },
   cardFront: {
     position: "absolute",
@@ -162,7 +149,7 @@ const styles = StyleSheet.create({
     color: "#fff",
     borderRadius: "10px",
     fontSize: "18px",
-    backfaceVisibility: "hidden", // Ensures text is not flipped
+    backfaceVisibility: "hidden",
   },
   cardBack: {
     position: "absolute",
@@ -175,8 +162,8 @@ const styles = StyleSheet.create({
     color: "#fff",
     borderRadius: "10px",
     fontSize: "18px",
-    transform: "rotateY(180deg)", // Back side is initially rotated
-    backfaceVisibility: "hidden", // Ensures text is not flipped
+    transform: "rotateY(180deg)",
+    backfaceVisibility: "hidden",
   },
   strong: {
     fontSize: "1.2rem",
@@ -186,6 +173,9 @@ const styles = StyleSheet.create({
     whiteSpace: "nowrap",
     overflow: "hidden",
     textOverflow: "ellipsis",
+  },
+  swiperContainer: {
+    padding: "30px 0px",
   },
 });
 
