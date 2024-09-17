@@ -50,10 +50,6 @@ function DeckSelectorAndFlashcards({
               depth: 100,
               modifier: 2.5,
             }}
-            pagination={{
-              clickable: true,
-              type: 'progressbar',
-            }}
             navigation={{
               clickable: true,
             }}
