@@ -1,45 +1,23 @@
 import React, { useRef, useState } from "react";
-import { StyleSheet, css } from "aphrodite";
+import { css, StyleSheet } from "aphrodite";
+import { HiArrowLeft } from "react-icons/hi"; // Import the left arrow icon
 import {
   initializeCarouselState,
   handleMouseDown,
   handleMouseMove,
   handleMouseUp,
   handleMouseLeave,
-  Modal,
 } from "../utils/utils"; // Adjust the import path as necessary
-import FlashcardCreator from "../Flashcard/FlashcardCreator";
-import { HiArrowLeft } from "react-icons/hi"; // Import the left arrow icon
 
-function Flashcards({
-  selectedDeck,
-  setSelectedDeck,
-  flashcards,
-  setFlashcards,
-}) {
+function DeckSelectorAndFlashcards({ deck, flashcards, setActiveDeckForFlashcards }) {
+  const [flippedCards, setFlippedCards] = useState({}); // State to track which cards are flipped
   const carouselRefs = useRef([]);
   const [isDragging, setIsDragging] = useState([]);
   const [startX, setStartX] = useState([]);
   const [scrollLeft, setScrollLeft] = useState([]);
 
-  const [isFlashcardModalOpen, setIsFlashcardModalOpen] = useState(false); // Control modal visibility
-  const [flippedCards, setFlippedCards] = useState({}); // State to track which cards are flipped
-
-  const handleAddFlashcard = (newFlashcard) => {
-    setFlashcards((prev) => [
-      ...prev,
-      { ...newFlashcard, deckId: selectedDeck.id },
-    ]);
-
-    setIsFlashcardModalOpen(false); // Close the modal after adding the flashcard
-  };
-
   const handleBackToSection = () => {
-    setSelectedDeck(null); // Reset selected deck to go back to the BodySection
-  };
-
-  const openFlashcardModal = () => {
-    setIsFlashcardModalOpen(true);
+    setActiveDeckForFlashcards(null); // Reset selected deck to go back to the BodySection
   };
 
   const handleCardClick = (index) => {
@@ -54,15 +32,7 @@ function Flashcards({
         <HiArrowLeft className={css(styles.arrowIcon)} />
         <span>Back</span>
       </div>
-      <h2>Flashcards for {selectedDeck.title}</h2>
 
-      {/* Button to open the Flashcard Creator modal */}
-      <button
-        className={css(styles.addFlashcardButton)}
-        onClick={openFlashcardModal}
-      >
-        Add Flashcard
-      </button>
       {flashcards.length === 0 ? (
         <p>No flashcards exist for this deck.</p>
       ) : (
@@ -95,7 +65,7 @@ function Flashcards({
             onMouseLeave={() => handleMouseLeave(setIsDragging, 0)}
           >
             {flashcards
-              .filter((card) => card.deckId === selectedDeck.id)
+              .filter((card) => card.deckId === deck.id)
               .map((card, index) => (
                 <li
                   key={index}
@@ -123,18 +93,15 @@ function Flashcards({
           </ul>
         </div>
       )}
-      {/* Modal for Flashcard Creation */}
-      {isFlashcardModalOpen && (
-        <Modal onClose={() => setIsFlashcardModalOpen(false)}>
-          <FlashcardCreator onSubmit={handleAddFlashcard} />
-        </Modal>
-      )}
     </div>
   );
 }
 
 // Styles
 const styles = StyleSheet.create({
+  grabbing: {
+    cursor: "grabbing",
+  },
   backButton: {
     display: "flex",
     alignItems: "center",
@@ -163,7 +130,7 @@ const styles = StyleSheet.create({
     listStyleType: "none",
     display: "flex",
     overflow: "hidden",
-    cursor: "pointer",
+    cursor: "grab",
     userSelect: "none",
   },
   carouselFlashcardsItem: {
@@ -222,4 +189,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Flashcards;
+export default DeckSelectorAndFlashcards;

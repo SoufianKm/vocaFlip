@@ -273,6 +273,7 @@ const styles = StyleSheet.create({
     whiteSpace: "nowrap",
     overflow: "hidden",
     textOverflow: "ellipsis",
+    padding: "5px 0px",
   },
   iconContainer: {
     display: "flex",

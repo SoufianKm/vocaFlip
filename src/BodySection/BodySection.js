@@ -40,7 +40,9 @@ const BodySection = () => {
           justifyContent: decks.length === 0 ? "center" : "flex-start",
         }}
       >
-        {activeSection === "startLearning" && <BodyLearning decks={decks} />}
+        {activeSection === "startLearning" && (
+          <BodyLearning decks={decks} flashcards={flashcards} />
+        )}
 
         {activeSection === "myDecks" &&
           (selectedDeck ? (
