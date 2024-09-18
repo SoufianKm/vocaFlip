@@ -18,12 +18,14 @@ const FlashcardCreator = ({ onSubmit }) => {
         type="text"
         value={frontText}
         onChange={(e) => setFrontText(e.target.value)}
+        required
       />
       <label>Back:</label>
       <input
         type="text"
         value={backText}
         onChange={(e) => setBackText(e.target.value)}
+        required
       />
       <button type="submit">Add Flashcard</button>
     </form>
