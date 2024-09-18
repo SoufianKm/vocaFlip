@@ -56,6 +56,8 @@ const BodySection = () => {
             <Decks
               selectedDeck={selectedDeck}
               setSelectedDeck={setSelectedDeck}
+              flashcards={flashcards}
+              setFlashcards={setFlashcards}
               decks={decks}
               setDecks={setDecks}
             />

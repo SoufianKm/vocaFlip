@@ -3,11 +3,13 @@ import { shallow } from "enzyme";
 import Decks from "./Decks";
 import DeckCreator from "../Decks/DeckCreator";
 import { Modal } from "../utils/utils";
+import { TbEdit, TbTrash } from "react-icons/tb";
 
 describe("Decks Component", () => {
   let wrapper;
   let setDecksMock;
   let setSelectedDeckMock;
+  let setFlashcardsMock;
   const mockDecks = [
     {
       id: 1,
@@ -26,12 +28,15 @@ describe("Decks Component", () => {
   beforeEach(() => {
     setDecksMock = jest.fn();
     setSelectedDeckMock = jest.fn();
+    setFlashcardsMock = jest.fn();
     wrapper = shallow(
       <Decks
         decks={mockDecks}
         setDecks={setDecksMock}
         selectedDeck={null}
         setSelectedDeck={setSelectedDeckMock}
+        flashcards={[]}
+        setFlashcards={setFlashcardsMock}
       />
     );
   });
@@ -89,12 +94,13 @@ describe("Decks Component", () => {
   });
 
   it("deletes a deck when the delete button is clicked", () => {
-    wrapper.find("TbTrash").at(0).simulate("click");
+    wrapper.find(TbTrash).at(0).simulate("click");
     expect(setDecksMock).toHaveBeenCalledWith([mockDecks[1]]); // Deck with id 1 is deleted
+    expect(setFlashcardsMock).toHaveBeenCalledWith([]); // Ensure flashcards are filtered
   });
 
   it("opens the edit modal when the edit button is clicked", () => {
-    wrapper.find("TbEdit").at(0).simulate("click");
+    wrapper.find(TbEdit).at(0).simulate("click");
     expect(wrapper.find(Modal).exists()).toBe(true);
     expect(wrapper.find('input[name="deckName"]').prop("defaultValue")).toBe(
       mockDecks[0].title
@@ -102,7 +108,7 @@ describe("Decks Component", () => {
   });
 
   it("updates the deck when edited in the modal", () => {
-    wrapper.find("TbEdit").at(0).simulate("click");
+    wrapper.find(TbEdit).at(0).simulate("click");
     wrapper.find("form").simulate("submit", {
       preventDefault: jest.fn(),
       target: { deckName: { value: "Updated Deck" } },
@@ -112,5 +118,19 @@ describe("Decks Component", () => {
       { ...mockDecks[0], title: "Updated Deck" },
       mockDecks[1],
     ]);
+  });
+
+  it("closes the modal after updating", () => {
+    wrapper.find(TbEdit).at(0).simulate("click");
+    wrapper.find("form").simulate("submit", {
+      preventDefault: jest.fn(),
+      target: { deckName: { value: "Updated Deck" } },
+    });
+    expect(wrapper.find(Modal).exists()).toBe(false);
+  });
+
+  it("does not open the edit modal if no deck is selected", () => {
+    wrapper.setProps({ decks: [] });
+    expect(wrapper.find(TbEdit).exists()).toBe(false);
   });
 });

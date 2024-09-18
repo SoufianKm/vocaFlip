@@ -30,6 +30,17 @@ export default function BodyLearning({ decks, flashcards }) {
 
   // Handle deck selection
   const handleDeckSelect = (deck) => {
+    // Count flashcards for the selected deck
+    const flashcardsCount = flashcards.filter(
+      (card) => card.deckId === deck.id
+    ).length;
+
+    // Show alert and block selection if no flashcards exist for the deck
+    if (flashcardsCount === 0) {
+      alert("No flashcards exist for this deck.");
+      return;
+    }
+
     setActiveDeckForFlashcards(deck); // Set the selected deck
   };
 
@@ -80,16 +91,28 @@ export default function BodyLearning({ decks, flashcards }) {
                     handleMouseLeave(setIsDragging, carouselIndex)
                   }
                 >
-                  {decks.map((deck, index) => (
-                    <div
-                      key={index}
-                      className={css(styles.deckItem)}
-                      onClick={() => handleDeckSelect(deck)} // Set the selected deck on click
-                    >
-                      <TbCardsFilled className={css(styles.deckIcon)} />
-                      <p className={css(styles.deckTitle)}>{deck.title}</p>
-                    </div>
-                  ))}
+                  {decks.map((deck, index) => {
+                    // Count flashcards for the current deck
+                    const flashcardsCount = flashcards.filter(
+                      (card) => card.deckId === deck.id
+                    ).length;
+                    return (
+                      <div
+                        key={index}
+                        className={css(styles.deckItem)}
+                        onClick={() => handleDeckSelect(deck)} // Set the selected deck on click
+                      >
+                        <p className={css(styles.deckTitle)}>{deck.title}</p>
+                        <div className={css(styles.flashcardsCountContainer)}>
+                          <p className={css(styles.flashcardsCount)}>
+                            {flashcardsCount}
+                            {/* Display the count of flashcards */}
+                          </p>
+                          <TbCardsFilled className={css(styles.deckIcon)} />
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             )
@@ -130,10 +153,22 @@ const styles = StyleSheet.create({
   },
   deckTitle: {
     fontSize: "1.4em",
+    fontWeight: "700",
   },
   languageGroup: {
     display: "flex",
     flexDirection: "column",
     alignItems: "flex-start",
+  },
+  flashcardsCountContainer: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center,",
+  },
+  flashcardsCount: {
+    margin: "0.3rem",
+    fontSize: "20px",
+    alignContent: "center",
   },
 });

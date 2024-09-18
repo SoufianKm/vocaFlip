@@ -11,7 +11,14 @@ import {
   Modal,
 } from "../utils/utils"; // Adjust the import path as necessary
 
-function Decks({ decks, setDecks, selectedDeck, setSelectedDeck }) {
+function Decks({
+  decks,
+  setDecks,
+  selectedDeck,
+  setSelectedDeck,
+  flashcards,
+  setFlashcards,
+}) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [creatingDeck, setCreatingDeck] = useState(false);
   const [deckToEdit, setDeckToEdit] = useState(false);
@@ -39,6 +46,8 @@ function Decks({ decks, setDecks, selectedDeck, setSelectedDeck }) {
 
   const handleDelete = (deckId) => {
     setDecks(decks.filter((deck) => deck.id !== deckId)); // Remove the deck by id
+    // Filter out the flashcards that belong to the deleted deck
+    setFlashcards(flashcards.filter((card) => card.deckId !== deckId));
   };
 
   const handleEdit = (deck) => {
@@ -121,30 +130,41 @@ function Decks({ decks, setDecks, selectedDeck, setSelectedDeck }) {
                     handleMouseLeave(setIsDragging, carouselIndex)
                   }
                 >
-                  {groupedDecks.map((deck, index) => (
-                    <div key={index} className={css(styles.carouselItem)}>
-                      <TbCardsFilled
-                        className={css(styles.deckIcon)}
-                        onClick={() => handleDeckSelect(deck)}
-                      />
-                      <p
-                        className={css(styles.deckTitle)}
-                        onClick={() => handleDeckSelect(deck)}
-                      >
-                        {deck.title}
-                      </p>
-                      <div className={css(styles.iconContainer)}>
-                        <TbEdit
-                          className={css(styles.iconAction)}
-                          onClick={() => handleEdit(deck)}
-                        />
-                        <TbTrash
-                          className={css(styles.iconAction)}
-                          onClick={() => handleDelete(deck.id)}
-                        />
+                  {groupedDecks.map((deck, index) => {
+                    const flashcardsCount = flashcards.filter(
+                      (card) => card.deckId === deck.id
+                    ).length; // Count flashcards for the current deck
+                    return (
+                      <div key={index} className={css(styles.carouselItem)}>
+                        <p
+                          className={css(styles.deckTitle)}
+                          onClick={() => handleDeckSelect(deck)}
+                        >
+                          {deck.title}
+                        </p>
+                        <div className={css(styles.flashcardsCountContainer)}>
+                          <p className={css(styles.flashcardsCount)}>
+                            {flashcardsCount}{" "}
+                            {/* Display the count of flashcards */}
+                          </p>
+                          <TbCardsFilled
+                            className={css(styles.deckIcon)}
+                            onClick={() => handleDeckSelect(deck)}
+                          />
+                        </div>
+                        <div className={css(styles.iconContainer)}>
+                          <TbEdit
+                            className={css(styles.iconAction)}
+                            onClick={() => handleEdit(deck)}
+                          />
+                          <TbTrash
+                            className={css(styles.iconAction)}
+                            onClick={() => handleDelete(deck.id)}
+                          />
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             </div>
@@ -261,6 +281,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginRight: "10px",
     borderRadius: "10px",
+    margin: "5px",
   },
   deckIcon: {
     fontSize: "2.4rem",
@@ -268,12 +289,14 @@ const styles = StyleSheet.create({
   },
   deckTitle: {
     fontSize: "1.4em",
+    fontWeight: "700",
     cursor: "pointer",
     maxWidth: "120px",
     whiteSpace: "nowrap",
     overflow: "hidden",
     textOverflow: "ellipsis",
     padding: "5px 0px",
+    margin: "5px",
   },
   iconContainer: {
     display: "flex",
@@ -286,6 +309,17 @@ const styles = StyleSheet.create({
     ":hover": {
       color: "yellow",
     },
+  },
+  flashcardsCountContainer: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  flashcardsCount: {
+    marginRight: "0.3rem",
+    fontSize: "20px",
+    alignContent: "center",
   },
 });
 

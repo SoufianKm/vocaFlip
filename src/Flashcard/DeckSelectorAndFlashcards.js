@@ -19,6 +19,10 @@ function DeckSelectorAndFlashcards({
   const [viewedCards, setViewedCards] = useState(new Set()); // Track viewed cards
   const [swipedCount, setSwipedCount] = useState(0); // Track the number of swiped cards
 
+  const flashcardsCount = flashcards.filter(
+    (card) => card.deckId === deck.id
+  ).length; // Count flashcards for the current deck
+
   // Handle back button click
   const handleBackToSection = () => {
     setActiveDeckForFlashcards(null);
@@ -72,12 +76,14 @@ function DeckSelectorAndFlashcards({
 
       {/* Display swiped count */}
       <div className={css(styles.swipeCount)}>
-        {swipedCount + 1}/{flashcards.length}
+        {swipedCount + 1}/{flashcardsCount}
       </div>
       <div className={css(styles.customProgressBarContainer)}>
         <div
           className={css(styles.customProgressBarFill)}
-          style={{ width: `${((swipedCount + 1) / flashcards.length) * 100}%` }} // Dynamic progress fill width
+          style={{
+            width: `${((swipedCount + 1) / flashcardsCount) * 100}%`,
+          }} // Dynamic progress fill width
         />
       </div>
       {flashcards.length === 0 ? (
@@ -262,6 +268,7 @@ const styles = StyleSheet.create({
   },
   swiperContainer: {
     padding: "30px 0px",
+    width: "100%",
   },
   buttonContainer: {
     display: "flex",
