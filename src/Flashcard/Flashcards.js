@@ -10,6 +10,7 @@ import {
 } from "../utils/utils"; // Adjust the import path as necessary
 import FlashcardCreator from "../Flashcard/FlashcardCreator";
 import { HiArrowLeft } from "react-icons/hi"; // Import the left arrow icon
+import { TbEdit, TbTrash } from "react-icons/tb"; // Import edit and delete icons
 
 function Flashcards({
   selectedDeck,
@@ -24,14 +25,26 @@ function Flashcards({
 
   const [isFlashcardModalOpen, setIsFlashcardModalOpen] = useState(false); // Control modal visibility
   const [flippedCards, setFlippedCards] = useState({}); // State to track which cards are flipped
+  const [editingFlashcard, setEditingFlashcard] = useState(null); // State to track the flashcard being edited
 
   const handleAddFlashcard = (newFlashcard) => {
-    setFlashcards((prev) => [
-      ...prev,
-      { ...newFlashcard, deckId: selectedDeck.id },
-    ]);
+    if (editingFlashcard) {
+      // Update the existing flashcard
+      setFlashcards((prev) =>
+        prev.map((card) =>
+          card.id === editingFlashcard.id ? { ...card, ...newFlashcard } : card
+        )
+      );
+      setEditingFlashcard(null); // Reset editing flashcard after update
+    } else {
+      // Add a new flashcard
+      setFlashcards((prev) => [
+        ...prev,
+        { ...newFlashcard, deckId: selectedDeck.id, id: Date.now() }, // Use a unique ID for each new flashcard
+      ]);
+    }
 
-    setIsFlashcardModalOpen(false); // Close the modal after adding the flashcard
+    setIsFlashcardModalOpen(false); // Close the modal after adding or updating the flashcard
   };
 
   const handleBackToSection = () => {
@@ -48,6 +61,18 @@ function Flashcards({
       [index]: !prev[index], // Toggle flip state for the clicked card
     }));
   };
+
+  const handleEditFlashcard = (flashcard, event) => {
+    event.stopPropagation(); // Prevent the click event from bubbling up
+    setEditingFlashcard(flashcard); // Set the flashcard to edit
+    setIsFlashcardModalOpen(true); // Open the modal
+  };
+
+  const handleDeleteFlashcard = (id, event) => {
+    event.stopPropagation(); // Prevent the click event from bubbling up
+    setFlashcards((prev) => prev.filter((card) => card.id !== id)); // Delete the flashcard
+  };
+
   return (
     <div className={css(styles.flashcardSection)}>
       <div className={css(styles.backButton)} onClick={handleBackToSection}>
@@ -111,6 +136,19 @@ function Flashcards({
                       <strong className={css(styles.strong)}>
                         {card.frontText}
                       </strong>
+
+                      <div className={css(styles.iconContainer)}>
+                        <TbEdit
+                          className={css(styles.iconAction)}
+                          onClick={(event) => handleEditFlashcard(card, event)} // Pass the event
+                        />
+                        <TbTrash
+                          className={css(styles.iconAction)}
+                          onClick={(event) =>
+                            handleDeleteFlashcard(card.id, event)
+                          }
+                        />
+                      </div>
                     </div>
                     <div className={css(styles.cardBack)}>
                       <strong className={css(styles.strong)}>
@@ -126,7 +164,10 @@ function Flashcards({
       {/* Modal for Flashcard Creation */}
       {isFlashcardModalOpen && (
         <Modal onClose={() => setIsFlashcardModalOpen(false)}>
-          <FlashcardCreator onSubmit={handleAddFlashcard} />
+          <FlashcardCreator
+            onSubmit={handleAddFlashcard}
+            initialData={editingFlashcard}
+          />
         </Modal>
       )}
     </div>
@@ -196,6 +237,7 @@ const styles = StyleSheet.create({
     borderRadius: "10px",
     fontSize: "18px",
     backfaceVisibility: "hidden", // Ensures text is not flipped
+    flexDirection: "column",
   },
   cardBack: {
     position: "absolute",
@@ -219,6 +261,18 @@ const styles = StyleSheet.create({
     whiteSpace: "nowrap",
     overflow: "hidden",
     textOverflow: "ellipsis",
+  },
+  iconContainer: {
+    display: "flex",
+    justifyContent: "space-between",
+    width: "60px",
+  },
+  iconAction: {
+    cursor: "pointer",
+    color: "white",
+    ":hover": {
+      color: "yellow",
+    },
   },
 });
 

@@ -65,7 +65,7 @@ describe("Flashcards Component", () => {
     expect(wrapper.find(Modal).exists()).toBe(true);
   });
 
-  it("calls handleAddFlashcard and closes the modal", () => {
+  it("calls handleAddFlashcard and closes the modal when a new flashcard is added", () => {
     wrapper.setState({ isFlashcardModalOpen: true }); // Open the modal
     const newFlashcard = { frontText: "New Front", backText: "New Back" };
 
@@ -74,7 +74,21 @@ describe("Flashcards Component", () => {
 
     expect(setFlashcardsMock).toHaveBeenCalledWith([
       ...flashcards,
-      { ...newFlashcard, deckId: selectedDeck.id },
+      { ...newFlashcard, deckId: selectedDeck.id, id: expect.any(Number) }, // Unique ID check
+    ]);
+    expect(wrapper.state("isFlashcardModalOpen")).toBe(false);
+  });
+
+  it("calls handleAddFlashcard and updates existing flashcard", () => {
+    const updatedFlashcard = { frontText: "Updated Front", backText: "Updated Back" };
+    wrapper.setState({ editingFlashcard: flashcards[0], isFlashcardModalOpen: true });
+
+    // Simulate updating a flashcard
+    wrapper.instance().handleAddFlashcard(updatedFlashcard);
+
+    expect(setFlashcardsMock).toHaveBeenCalledWith([
+      { id: 1, frontText: "Updated Front", backText: "Updated Back", deckId: 1 },
+      flashcards[1],
     ]);
     expect(wrapper.state("isFlashcardModalOpen")).toBe(false);
   });
@@ -86,5 +100,22 @@ describe("Flashcards Component", () => {
     // Click again to toggle back
     wrapper.find("li").at(0).simulate("click");
     expect(wrapper.state("flippedCards")[0]).toBe(false);
+  });
+
+  it("opens the modal for editing a flashcard", () => {
+    wrapper.find("li").at(0).find("TbEdit").simulate("click");
+    expect(wrapper.state("editingFlashcard")).toEqual(flashcards[0]);
+    expect(wrapper.state("isFlashcardModalOpen")).toBe(true);
+  });
+
+  it("deletes a flashcard and updates state", () => {
+    wrapper.find("li").at(0).find("TbTrash").simulate("click");
+    expect(setFlashcardsMock).toHaveBeenCalledWith([flashcards[1]]);
+  });
+
+  it("closes the modal when the onClose prop is called", () => {
+    wrapper.setState({ isFlashcardModalOpen: true });
+    wrapper.find(Modal).prop('onClose')();
+    expect(wrapper.state("isFlashcardModalOpen")).toBe(false);
   });
 });

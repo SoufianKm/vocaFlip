@@ -1,14 +1,22 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
-const FlashcardCreator = ({ onSubmit }) => {
+const FlashcardCreator = ({ onSubmit, initialData }) => {
   const [frontText, setFrontText] = useState("");
   const [backText, setBackText] = useState("");
+
+  // Effect to set the initial data when editing
+  useEffect(() => {
+    if (initialData) {
+      setFrontText(initialData.frontText);
+      setBackText(initialData.backText);
+    }
+  }, [initialData]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     onSubmit({ frontText, backText });
-    setFrontText("");
-    setBackText("");
+    setFrontText(""); // Clear the input field
+    setBackText(""); // Clear the input field
   };
 
   return (
@@ -27,7 +35,9 @@ const FlashcardCreator = ({ onSubmit }) => {
         onChange={(e) => setBackText(e.target.value)}
         required
       />
-      <button type="submit">Add Flashcard</button>
+      <button type="submit">
+        {initialData ? "Update Flashcard" : "Add Flashcard"}
+      </button>
     </form>
   );
 };

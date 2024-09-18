@@ -73,4 +73,23 @@ describe("FlashcardCreator Component", () => {
     expect(wrapper.find('input[type="text"]').at(0).prop("value")).toBe("");
     expect(wrapper.find('input[type="text"]').at(1).prop("value")).toBe("");
   });
+
+  it("sets input fields when initialData is provided", () => {
+    const initialData = { frontText: "Initial Front", backText: "Initial Back" };
+    wrapper.setProps({ initialData });
+
+    expect(wrapper.find('input[type="text"]').at(0).props().value).toBe("Initial Front");
+    expect(wrapper.find('input[type="text"]').at(1).props().value).toBe("Initial Back");
+  });
+
+  it("updates the button text to 'Update Flashcard' when initialData is provided", () => {
+    const initialData = { frontText: "Initial Front", backText: "Initial Back" };
+    wrapper.setProps({ initialData });
+
+    expect(wrapper.find("button").text()).toBe("Update Flashcard");
+  });
+
+  it("updates the button text to 'Add Flashcard' when initialData is not provided", () => {
+    expect(wrapper.find("button").text()).toBe("Add Flashcard");
+  });
 });
