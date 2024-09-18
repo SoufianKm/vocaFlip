@@ -7,6 +7,7 @@ import SignUpForm from "../SignUp/SignUp";
 import { StyleSheet, css } from "aphrodite";
 import { AppProvider, AppContext } from "./AppContext"; // Import AppContext
 import BodySection from "../BodySection/BodySection"; // Import the Decks component
+import thumb from "../../assets/thumb.png";
 
 // MainContainer component to handle the conditional rendering
 function MainContainer({ type, handleOnClick }) {
@@ -24,9 +25,12 @@ function MainContainer({ type, handleOnClick }) {
         <div className="overlay-container">
           <div className="overlay">
             <div className="overlay-panel overlay-left">
-              <h1>Welcome Back!</h1>
+              <img src={thumb} width={250} />
+              <h1>Already have an account?</h1>
               <p>
-                To keep connected with us, please login with your personal info
+                Welcome back! Please log in with your personal information to
+                continue your journey with VocaFlip. We’re excited to see you
+                again!
               </p>
               <button
                 className="ghost"
@@ -37,8 +41,12 @@ function MainContainer({ type, handleOnClick }) {
               </button>
             </div>
             <div className="overlay-panel overlay-right">
+              <img src={thumb} width={250} />
               <h1>Hello, Friend!</h1>
-              <p>Enter your personal details and start your journey with us</p>
+              <p>
+                Are you ready to embark on a journey of language learning? Join
+                us on VocaFlip and start expanding your vocabulary today!
+              </p>
               <button
                 className="ghost"
                 id="signUp"
