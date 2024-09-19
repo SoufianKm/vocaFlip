@@ -8,6 +8,7 @@ import "swiper/css/pagination";
 import "swiper/css/navigation";
 
 import { EffectCoverflow, Pagination, Navigation } from "swiper/modules"; // Correct import for modules
+import ShareFlashcard from "../ShareFlashcard/ShareFlashcard";
 
 function DeckSelectorAndFlashcards({
   deck,
@@ -150,26 +151,29 @@ function DeckSelectorAndFlashcards({
 
       {/* Conditionally render buttons if the active card is flipped */}
       {flippedCards[currentCardIndex] && (
-        <div className={css(styles.buttonContainer)}>
-          <button
-            className={css(styles.answerButton, styles.knowButton)}
-            onClick={() => console.log("I know it")}
-          >
-            I know it
-          </button>
-          <button
-            className={css(styles.answerButton, styles.noIdeaButton)}
-            onClick={() => console.log("No idea")}
-          >
-            No idea
-          </button>
-          <button
-            className={css(styles.answerButton, styles.notSureButton)}
-            onClick={() => console.log("Not sure")}
-          >
-            Not sure
-          </button>
-        </div>
+        <>
+          <div className={css(styles.buttonContainer)}>
+            <button
+              className={css(styles.answerButton, styles.knowButton)}
+              onClick={() => console.log("I know it")}
+            >
+              I know it
+            </button>
+            <button
+              className={css(styles.answerButton, styles.noIdeaButton)}
+              onClick={() => console.log("No idea")}
+            >
+              No idea
+            </button>
+            <button
+              className={css(styles.answerButton, styles.notSureButton)}
+              onClick={() => console.log("Not sure")}
+            >
+              Not sure
+            </button>
+          </div>
+          <ShareFlashcard />
+        </>
       )}
     </div>
   );
