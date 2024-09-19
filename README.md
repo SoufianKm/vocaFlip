@@ -1,70 +1,82 @@
-# Getting Started with Create React App
+# VocaFlip
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+![VocaFlip Logo](https://github.com/SoufianKm/vocaFlip/blob/9fc923c13f9282ec86fa2effdb6bc64f6008cf4c/assets/logo.png)
 
-## Available Scripts
+## Description
 
-In the project directory, you can run:
+**VocaFlip** is an intuitive language learning application designed to help users improve their vocabulary through interactive flashcards. Users can create custom decks, flip through flashcards, track progress, and share their decks with others. The app integrates responsive design for mobile and tablet devices, ensuring a smooth learning experience across all platforms.
 
-### `npm start`
+## Features
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- Create and manage decks with flashcards for different languages.
+- Share your decks with others via social media platforms.
+- Flip through flashcards and mark your progress with options such as “Not Sure” and “No Idea.”
+- User authentication and data management using Firebase.
+- Explore other users' decks categorized by language on the homepage.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Architecture & Technologies
 
-### `npm test`
+### Frontend:
+- **React.js**: For building the user interface.
+- **Swiper.js**: For creating a smooth and intuitive carousel of language decks.
+- **Aphrodite**: To handle CSS in JavaScript and provide styles.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Backend:
+- **Firebase**: Provides authentication, real-time database, and storage solutions.
 
-### `npm run build`
+### Third-party Libraries:
+- **React-Share**: To enable social media sharing of decks and website content.
+- **Swiper**: For implementing carousels to browse through decks and languages.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Getting Started
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### Prerequisites
+- Node.js
+- npm or yarn
+- Firebase account
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### Installation
 
-### `npm run eject`
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/SoufianKm/vocaFlip.git
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+3. Set up Firebase:
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+   - Create a Firebase project.
+   - Enable Authentication (Email/Password).
+   - Add your Firebase configuration to `src/firebase/firbase.js`.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+4. Run the project locally:
+   ```bash
+   npm start
+   ```
 
 ### Deployment
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+VocaFlip can be deployed to Firebase Hosting, Vercel, or any other static site hosting service. Follow your host’s specific deployment instructions.
 
-### `npm run build` fails to minify
+## Usage
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- Create an account or sign in using your credentials.
+- Start learning by selecting a language and navigating through flashcards.
+- Share decks with friends and family via social media.
+- Track your learning progress with each flashcard flipped.
+
+## Next Steps
+
+- Optimize the platform for mobile and tablet devices.
+- Handle errors and exceptions to ensure smooth navigation.
+- Add a feature to track total words learned with options for “Not Sure” and “No Idea.”
+- Allow users to share their created decks on a categorized homepage by language.
+- Finalize social media sharing functionality after deployment.
+- Continue refining the user experience and adding more language decks.
+
+## License
+
+This project is licensed under the MIT License.
