@@ -7,10 +7,10 @@ import {
   handleMouseUp,
   handleMouseLeave,
   Modal,
-} from "../utils/utils"; // Adjust the import path as necessary
+} from "../utils/utils";
 import FlashcardCreator from "../Flashcard/FlashcardCreator";
-import { HiArrowLeft } from "react-icons/hi"; // Import the left arrow icon
-import { TbEdit, TbTrash } from "react-icons/tb"; // Import edit and delete icons
+import { HiArrowLeft } from "react-icons/hi";
+import { TbEdit, TbTrash } from "react-icons/tb";
 
 function Flashcards({
   selectedDeck,
@@ -23,13 +23,12 @@ function Flashcards({
   const [startX, setStartX] = useState([]);
   const [scrollLeft, setScrollLeft] = useState([]);
 
-  const [isFlashcardModalOpen, setIsFlashcardModalOpen] = useState(false); // Control modal visibility
-  const [flippedCards, setFlippedCards] = useState({}); // State to track which cards are flipped
-  const [editingFlashcard, setEditingFlashcard] = useState(null); // State to track the flashcard being edited
+  const [isFlashcardModalOpen, setIsFlashcardModalOpen] = useState(false);
+  const [flippedCards, setFlippedCards] = useState({});
+  const [editingFlashcard, setEditingFlashcard] = useState(null);
 
   const handleAddFlashcard = (newFlashcard) => {
     if (editingFlashcard) {
-      // Update the existing flashcard
       setFlashcards((prev) =>
         prev.map((card) =>
           card.id === editingFlashcard.id ? { ...card, ...newFlashcard } : card
@@ -37,40 +36,44 @@ function Flashcards({
       );
       setEditingFlashcard(null); // Reset editing flashcard after update
     } else {
-      // Add a new flashcard
       setFlashcards((prev) => [
         ...prev,
-        { ...newFlashcard, deckId: selectedDeck.id, id: Date.now() }, // Use a unique ID for each new flashcard
+        { ...newFlashcard, deckId: selectedDeck.id, id: Date.now() },
       ]);
     }
-
     setIsFlashcardModalOpen(false); // Close the modal after adding or updating the flashcard
   };
 
   const handleBackToSection = () => {
-    setSelectedDeck(null); // Reset selected deck to go back to the BodySection
+    setSelectedDeck(null);
   };
 
   const openFlashcardModal = () => {
-    setIsFlashcardModalOpen(true);
+    setEditingFlashcard(null); // Clear editing state when adding a new flashcard
+    setIsFlashcardModalOpen(true); // Open modal
   };
 
   const handleCardClick = (index) => {
     setFlippedCards((prev) => ({
       ...prev,
-      [index]: !prev[index], // Toggle flip state for the clicked card
+      [index]: !prev[index], // Toggle flip state
     }));
   };
 
   const handleEditFlashcard = (flashcard, event) => {
-    event.stopPropagation(); // Prevent the click event from bubbling up
-    setEditingFlashcard(flashcard); // Set the flashcard to edit
-    setIsFlashcardModalOpen(true); // Open the modal
+    event.stopPropagation();
+    setEditingFlashcard(flashcard); // Set flashcard for editing
+    setIsFlashcardModalOpen(true); // Open modal
   };
 
   const handleDeleteFlashcard = (id, event) => {
-    event.stopPropagation(); // Prevent the click event from bubbling up
-    setFlashcards((prev) => prev.filter((card) => card.id !== id)); // Delete the flashcard
+    event.stopPropagation();
+    setFlashcards((prev) => prev.filter((card) => card.id !== id));
+  };
+
+  const handleCancelFlashcard = () => {
+    setEditingFlashcard(null); // Clear editing flashcard state
+    setIsFlashcardModalOpen(false); // Close the modal
   };
 
   return (
@@ -81,7 +84,6 @@ function Flashcards({
       </div>
       <h2>Flashcards for {selectedDeck.title}</h2>
 
-      {/* Button to open the Flashcard Creator modal */}
       <button
         className={css(styles.addFlashcardButton)}
         onClick={openFlashcardModal}
@@ -93,7 +95,7 @@ function Flashcards({
       ) : (
         <div className={css(styles.flashcardsContainer)}>
           <ul
-            className={css(styles.carouselFlashcards)} // Add grabbing style conditionally
+            className={css(styles.carouselFlashcards)}
             ref={(el) => (carouselRefs.current[0] = el)}
             onMouseDown={(e) =>
               handleMouseDown(
@@ -140,7 +142,7 @@ function Flashcards({
                       <div className={css(styles.iconContainer)}>
                         <TbEdit
                           className={css(styles.iconAction)}
-                          onClick={(event) => handleEditFlashcard(card, event)} // Pass the event
+                          onClick={(event) => handleEditFlashcard(card, event)}
                         />
                         <TbTrash
                           className={css(styles.iconAction)}
@@ -161,12 +163,12 @@ function Flashcards({
           </ul>
         </div>
       )}
-      {/* Modal for Flashcard Creation */}
       {isFlashcardModalOpen && (
-        <Modal onClose={() => setIsFlashcardModalOpen(false)}>
+        <Modal onClose={handleCancelFlashcard}>
           <FlashcardCreator
             onSubmit={handleAddFlashcard}
             initialData={editingFlashcard}
+            onCancel={handleCancelFlashcard}
           />
         </Modal>
       )}

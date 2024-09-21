@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
+import { StyleSheet, css } from "aphrodite";
 
-const FlashcardCreator = ({ onSubmit, initialData }) => {
+const FlashcardCreator = ({ onSubmit, initialData, onCancel }) => {
   const [frontText, setFrontText] = useState("");
   const [backText, setBackText] = useState("");
 
@@ -9,6 +10,10 @@ const FlashcardCreator = ({ onSubmit, initialData }) => {
     if (initialData) {
       setFrontText(initialData.frontText);
       setBackText(initialData.backText);
+    } else {
+      // Clear the form when there is no initialData (i.e. adding a new card)
+      setFrontText("");
+      setBackText("");
     }
   }, [initialData]);
 
@@ -17,6 +22,12 @@ const FlashcardCreator = ({ onSubmit, initialData }) => {
     onSubmit({ frontText, backText });
     setFrontText(""); // Clear the input field
     setBackText(""); // Clear the input field
+  };
+
+  const handleCancel = () => {
+    setFrontText(""); // Clear the input field
+    setBackText(""); // Clear the input field
+    onCancel(); // Close the modal
   };
 
   return (
@@ -35,11 +46,26 @@ const FlashcardCreator = ({ onSubmit, initialData }) => {
         onChange={(e) => setBackText(e.target.value)}
         required
       />
-      <button type="submit">
-        {initialData ? "Update Flashcard" : "Add Flashcard"}
-      </button>
+      <div>
+        <button type="submit">
+          {initialData ? "Update Flashcard" : "Add Flashcard"}
+        </button>
+        <button
+          type="button"
+          onClick={handleCancel}
+          className={css(styles.buttonsCancel)}
+        >
+          Cancel
+        </button>
+      </div>
     </form>
   );
 };
+
+const styles = StyleSheet.create({
+  buttonsCancel: {
+    marginLeft: "5px",
+  },
+});
 
 export default FlashcardCreator;
